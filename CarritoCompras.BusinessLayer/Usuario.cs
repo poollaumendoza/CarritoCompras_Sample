@@ -29,7 +29,8 @@ namespace CarritoCompras.BusinessLayer
                 mensaje = "El nombre del usuario no puede ser vacío";
 
             if (string.IsNullOrEmpty(mensaje)) {
-                Recursos.ConvertirSHA256("test123");
+                obj.Clave = "test123";
+                Recursos.ConvertirSHA256(obj.Clave);
                 return dUsuario.Registrar(obj, out mensaje);
             }
             else

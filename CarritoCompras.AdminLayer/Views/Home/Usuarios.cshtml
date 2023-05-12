@@ -145,12 +145,40 @@
                 Correo: $("#txtcorreo").val(),
                 Activo: $("#cboactivo").val() == 1 ? true : false
             }
-            if (Usuario.IdUsuario == 0) {
-                tabladata.row.add(Usuario).draw(false);
-            } else {
-                alert("Editar Usuario")
-            }
-            $("#FormModal").modal("hide");
+
+            jQuery.ajax({
+                url: '@Url.Action("GuardarUsuario", "Home")',
+                type: "POST",
+                data: JSON.stringify({ objeto: Usuario }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    debugger;
+                    if (Usuario.IdUsuario == 0) {
+                        if (data.resultado != 0) {
+                            Usuario.IdUsuario = data.IdUsuario;
+                            tabladata.row.add(Usuario).draw(false);
+                            $("#FormModal").modal("hide");
+                        } else {
+                            alert(data.mensaje)
+                        }
+
+
+
+
+                        
+                    } else {
+                        tabladata.row(filaSeleccionada).data(Usuario).draw(false);
+                    }
+                },
+                error: function (error) {
+                    console.log(error)
+                },
+                beforeSend: function () {
+
+                }
+            });
+            
         }
     </script>
 }

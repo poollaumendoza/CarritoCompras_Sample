@@ -27,5 +27,19 @@ namespace CarritoCompras.AdminLayer.Controllers
 
             return Json(new { data = oLista }, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpPost]
+        public JsonResult GuardarUsuario(EntityLayer.Usuario objeto)
+        {
+            object resultado;
+            string mensaje = string.Empty;
+
+            if(objeto.IdUsuario == 0)
+                resultado = new Usuario().Registrar(objeto, out mensaje);
+            else
+                resultado = new Usuario().Editar(objeto, out mensaje);
+
+            return Json(new { resultado = resultado, mensaje = mensaje }, JsonRequestBehavior.AllowGet);
+        }
     }
 }

@@ -3,7 +3,43 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.33529.398
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarritoCompras.AdminLayer", "CarritoCompras.AdminLayer\CarritoCompras.AdminLayer.csproj", "{E6E55A7F-D012-49D3-9889-E690DAE717EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarritoCompras.ClientLayer", "CarritoCompras.ClientLayer\CarritoCompras.ClientLayer.csproj", "{78A4397C-8119-434E-BB99-64B83627CEF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarritoCompras.DataLayer", "CarritoCompras.DataLayer\CarritoCompras.DataLayer.csproj", "{E75070DA-9CAC-4B5F-A35A-49AC9E19BA2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarritoCompras.EntityLayer", "CarritoCompras.EntityLayer\CarritoCompras.EntityLayer.csproj", "{06194E36-D9EC-4CDD-A328-16D2FD796358}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarritoCompras.BusinessLayer", "CarritoCompras.BusinessLayer\CarritoCompras.BusinessLayer.csproj", "{F4056E46-7841-443E-A14E-73CF87F08B54}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E6E55A7F-D012-49D3-9889-E690DAE717EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6E55A7F-D012-49D3-9889-E690DAE717EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6E55A7F-D012-49D3-9889-E690DAE717EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6E55A7F-D012-49D3-9889-E690DAE717EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78A4397C-8119-434E-BB99-64B83627CEF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78A4397C-8119-434E-BB99-64B83627CEF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78A4397C-8119-434E-BB99-64B83627CEF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78A4397C-8119-434E-BB99-64B83627CEF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E75070DA-9CAC-4B5F-A35A-49AC9E19BA2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E75070DA-9CAC-4B5F-A35A-49AC9E19BA2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E75070DA-9CAC-4B5F-A35A-49AC9E19BA2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E75070DA-9CAC-4B5F-A35A-49AC9E19BA2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06194E36-D9EC-4CDD-A328-16D2FD796358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06194E36-D9EC-4CDD-A328-16D2FD796358}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06194E36-D9EC-4CDD-A328-16D2FD796358}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06194E36-D9EC-4CDD-A328-16D2FD796358}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4056E46-7841-443E-A14E-73CF87F08B54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4056E46-7841-443E-A14E-73CF87F08B54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4056E46-7841-443E-A14E-73CF87F08B54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4056E46-7841-443E-A14E-73CF87F08B54}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection

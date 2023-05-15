@@ -1,40 +1,36 @@
-﻿using System;
+﻿using CarritoCompras.EntityLayer;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CarritoCompras.EntityLayer;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace CarritoCompras.DataLayer
 {
-    public class Usuarios
+    public class Categoria
     {
-        public List<Usuario> Listar()
+        public List<EntityLayer.Categoria> Listar()
         {
-            List<Usuario> lista = new List<Usuario>();
+            List<EntityLayer.Categoria> lista = new List<EntityLayer.Categoria>();
 
             try
             {
                 using (SqlConnection Cnx = new SqlConnection(Conexion.Cn))
                 {
-                    string query = "Select IdUsuario, Nombres, Apellidos, Correo, Clave, Restablecer, Activo from Usuario";
+                    string query = "Select IdCategoria, Descripcion, Activo from Categoria";
                     SqlCommand Cmd = new SqlCommand(query, Cnx);
 
                     Cnx.Open();
                     using (SqlDataReader Dr = Cmd.ExecuteReader())
                     {
-                        while(Dr.Read())
+                        while (Dr.Read())
                         {
-                            lista.Add(new Usuario()
+                            lista.Add(new EntityLayer.Categoria()
                             {
-                                IdUsuario = Convert.ToInt32(Dr["IdUsuario"]),
-                                Nombres = Dr["Nombres"].ToString(),
-                                Apellidos = Dr["Apellidos"].ToString(),
-                                Correo = Dr["Correo"].ToString(),
-                                Clave = Dr["Clave"].ToString(),
-                                Reestablecer = Convert.ToBoolean(Dr["Restablecer"]),
+                                IdCategoria = Convert.ToInt32(Dr["IdCategoria"]),
+                                Descripcion = Dr["Descripcion"].ToString(),
                                 Activo = Convert.ToBoolean(Dr["Activo"]),
 
                             });
@@ -44,46 +40,45 @@ namespace CarritoCompras.DataLayer
             }
             catch
             {
-                lista = new List<Usuario>();
+                lista = new List<EntityLayer.Categoria>();
             }
 
             return lista;
         }
 
-        public int Registrar(Usuario obj, out string mensaje)
+        public int Registrar(EntityLayer.Categoria obj, out string Mensaje)
         {
             int IdAutogenerado = 0;
 
-            mensaje = string.Empty;
+            Mensaje = string.Empty;
             try
             {
                 using (SqlConnection Cnx = new SqlConnection(Conexion.Cn))
                 {
-                    SqlCommand Cmd = new SqlCommand("sp_RegistrarUsuario", Cnx);
-                    Cmd.Parameters.AddWithValue("Nombres", obj.Nombres);
-                    Cmd.Parameters.AddWithValue("Apellidos", obj.Apellidos);
-                    Cmd.Parameters.AddWithValue("Correo", obj.Correo);
-                    Cmd.Parameters.AddWithValue("Clave", obj.Clave);
+                    SqlCommand Cmd = new SqlCommand("sp_RegistrarCategoria", Cnx);
+                    Cmd.Parameters.AddWithValue("Descripcion", obj.Descripcion);
                     Cmd.Parameters.AddWithValue("Activo", obj.Activo);
                     Cmd.Parameters.Add("Resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
                     Cmd.Parameters.Add("Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
                     Cmd.CommandType = CommandType.StoredProcedure;
 
                     Cnx.Open();
+                    Cmd.ExecuteNonQuery();
 
                     IdAutogenerado = Convert.ToInt32(Cmd.Parameters["Resultado"].Value);
-                    mensaje = Cmd.Parameters["Mensaje"].Value.ToString();
+                    Mensaje = Cmd.Parameters["Mensaje"].Value.ToString();
+
                 }
             }
             catch (Exception ex)
             {
                 IdAutogenerado = 0;
-                mensaje = ex.Message;
+                Mensaje = ex.Message;
             }
             return IdAutogenerado;
         }
 
-        public bool Editar(Usuario obj, out string mensaje)
+        public bool Editar(EntityLayer.Categoria obj, out string mensaje)
         {
             bool resultado = false;
             mensaje = string.Empty;
@@ -92,17 +87,16 @@ namespace CarritoCompras.DataLayer
             {
                 using (SqlConnection Cnx = new SqlConnection(Conexion.Cn))
                 {
-                    SqlCommand Cmd = new SqlCommand("sp_EditarUsuario", Cnx);
-                    Cmd.Parameters.AddWithValue("Nombres", obj.Nombres);
-                    Cmd.Parameters.AddWithValue("Apellidos", obj.Apellidos);
-                    Cmd.Parameters.AddWithValue("Correo", obj.Correo);
-                    Cmd.Parameters.AddWithValue("Clave", obj.Clave);
+                    SqlCommand Cmd = new SqlCommand("sp_EditarCategoria", Cnx);
+                    Cmd.Parameters.AddWithValue("IdCategoria", obj.IdCategoria);
+                    Cmd.Parameters.AddWithValue("Descripcion", obj.Descripcion);
                     Cmd.Parameters.AddWithValue("Activo", obj.Activo);
                     Cmd.Parameters.Add("Resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
                     Cmd.Parameters.Add("Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
                     Cmd.CommandType = CommandType.StoredProcedure;
 
                     Cnx.Open();
+                    Cmd.ExecuteNonQuery();
 
                     resultado = Convert.ToBoolean(Cmd.Parameters["Resultado"].Value);
                     mensaje = Cmd.Parameters["Mensaje"].Value.ToString();
@@ -125,8 +119,8 @@ namespace CarritoCompras.DataLayer
             {
                 using (SqlConnection Cnx = new SqlConnection(Conexion.Cn))
                 {
-                    SqlCommand Cmd = new SqlCommand("Delete Usuario where IdUsuario = @IdUsuario", Cnx);
-                    Cmd.Parameters.AddWithValue("@IdUsuario", id);
+                    SqlCommand Cmd = new SqlCommand("Delete Categoria where IdCategoria = @IdCategoria", Cnx);
+                    Cmd.Parameters.AddWithValue("@IdCategoria", id);
                     Cmd.CommandType = CommandType.Text;
                     Cnx.Open();
                     resultado = Cmd.ExecuteNonQuery() > 0 ? true : false;

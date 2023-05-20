@@ -1,6 +1,10 @@
 ﻿using CarritoCompras.BusinessLayer;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security.Policy;
 using System.Web;
@@ -103,17 +107,76 @@ namespace CarritoCompras.AdminLayer.Controllers
         }
 
         [HttpPost]
-        public JsonResult GuardarProducto(EntityLayer.Producto objeto)
+        public JsonResult GuardarProducto(string objeto, HttpPostedFileBase archivoImagen)
         {
             object resultado;
             string mensaje = string.Empty;
+            bool operacion_exitosa = true;
+            bool guardar_imagen_exito = true;
+            int idproductogenerado = 0;
 
-            if (objeto.IdProducto == 0)
-                resultado = new Producto().Registrar(objeto, out mensaje);
+            EntityLayer.Producto oProducto = new EntityLayer.Producto();
+            oProducto = JsonConvert.DeserializeObject<EntityLayer.Producto>(objeto);
+
+            decimal precio;
+            if (decimal.TryParse(oProducto.PrecioTexto, NumberStyles.AllowDecimalPoint, new CultureInfo("es-PE"), out precio))
+                oProducto.Precio = precio;
             else
-                resultado = new Producto().Editar(objeto, out mensaje);
+                return Json(new { operacionExitosa = false, mensaje = "El formato del precio debe ser ##.##" }, JsonRequestBehavior.AllowGet);
 
-            return Json(new { resultado = resultado, mensaje = mensaje }, JsonRequestBehavior.AllowGet);
+            if (oProducto.IdProducto == 0) {
+                idproductogenerado = new Producto().Registrar(oProducto, out mensaje);
+                if (idproductogenerado != 0)
+                    oProducto.IdProducto = idproductogenerado;
+                else
+                    operacion_exitosa = false;
+                if(operacion_exitosa)
+                    if(archivoImagen != null)
+                    {
+                        string rutaImagenes = ConfigurationManager.AppSettings["ServidorFotos"];
+                        string extension = Path.GetExtension(archivoImagen.FileName);
+                        string nombreImagen = string.Concat(oProducto.IdProducto.ToString(), extension);
+                        try
+                        {
+                            archivoImagen.SaveAs(Path.Combine(rutaImagenes, nombreImagen));
+                        }
+                        catch (Exception ex)
+                        {
+                            string msg = ex.Message;
+                            guardar_imagen_exito = false;
+                        }
+                        if (guardar_imagen_exito)
+                        {
+                            oProducto.RutaImagen = rutaImagenes;
+                            oProducto.NombreImagen = nombreImagen;
+                            bool rpta = new BusinessLayer.Producto().GuardarDatosImagen(oProducto, out mensaje);
+                        }
+                    }
+            }
+            else
+                resultado = new Producto().Editar(oProducto, out mensaje);
+
+            return Json(
+                new { 
+                    operacionExitosa = operacion_exitosa, 
+                    idGenerado = oProducto.IdProducto, 
+                    mensaje = mensaje }, 
+                JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult ImagenProducto(int id)
+        {
+            bool conversion;
+            EntityLayer.Producto oProducto = new Producto().Listar().Where(p => p.IdProducto == id).FirstOrDefault();
+            string textoBase64 = Recursos.ConvertirBase64(Path.Combine(oProducto.RutaImagen, oProducto.NombreImagen), out conversion);
+
+            return Json(
+                new { 
+                    conversion = conversion, 
+                    textobase64 = textoBase64, 
+                    extension = Path.GetExtension(oProducto.NombreImagen) }, 
+                JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

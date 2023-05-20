@@ -145,7 +145,8 @@ namespace CarritoCompras.DataLayer
             {
                 using (SqlConnection Cnx = new SqlConnection(Conexion.Cn))
                 {
-                    SqlCommand Cmd = new SqlCommand("Update Producto set RutaImagen = @RutaImagen, NombreImagen = @NombreImagen where IdProducto = @IdProducto", Cnx);
+                    string query = "Update Producto set RutaImagen = @RutaImagen, NombreImagen = @NombreImagen where IdProducto = @IdProducto";
+                    SqlCommand Cmd = new SqlCommand(query, Cnx);
                     Cmd.Parameters.AddWithValue("@IdProducto", oProducto.IdProducto);
                     Cmd.Parameters.AddWithValue("@RutaImagen", oProducto.RutaImagen);
                     Cmd.Parameters.AddWithValue("@NombreImagen", oProducto.NombreImagen);

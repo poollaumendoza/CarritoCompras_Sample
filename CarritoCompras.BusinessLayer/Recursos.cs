@@ -53,15 +53,32 @@ namespace CarritoCompras.BusinessLayer
                     Port = 587,
                     EnableSsl = true
                 };
-                //smtp.Send(mail);
+                smtp.Send(mail);
                 resultado = true;
             }
-            catch (Exception ex)
+            catch
             {
                 resultado = false;
             }
 
             return resultado;
+        }
+
+        public static string ConvertirBase64(string rutaImagen, out bool conversion)
+        {
+            string textoBase64 = string.Empty;
+            conversion = true;
+
+            try
+            {
+                textoBase64 = Convert.ToBase64String(File.ReadAllBytes(rutaImagen));
+            }
+            catch
+            {
+                conversion = false;
+            }
+
+            return textoBase64;
         }
     }
 }

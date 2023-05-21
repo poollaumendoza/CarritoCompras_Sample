@@ -52,5 +52,12 @@ namespace CarritoCompras.AdminLayer.Controllers
 
             return Json(new { resultado = respuesta, mensaje = mensaje }, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult VistaDashBoard()
+        {
+            EntityLayer.DashBoard objeto = new DashBoard().VerDashBoard();
+
+            return Json(new { resultado = objeto }, JsonRequestBehavior.AllowGet);
+        }
     }
 }

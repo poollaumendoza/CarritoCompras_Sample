@@ -1,56 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CarritoCompras.EntityLayer;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace CarritoCompras.DataLayer
 {
-    public class Usuario
+    public class Cliente
     {
-        public List<EntityLayer.Usuario> Listar()
-        {
-            List<EntityLayer.Usuario> lista = new List<EntityLayer.Usuario>();
-
-            try
-            {
-                using (SqlConnection Cnx = new SqlConnection(Conexion.Cn))
-                {
-                    string query = "Select IdUsuario, Nombres, Apellidos, Correo, Clave, Restablecer, Activo from Usuario";
-                    SqlCommand Cmd = new SqlCommand(query, Cnx);
-
-                    Cnx.Open();
-                    using (SqlDataReader Dr = Cmd.ExecuteReader())
-                    {
-                        while(Dr.Read())
-                        {
-                            lista.Add(new EntityLayer.Usuario()
-                            {
-                                IdUsuario = Convert.ToInt32(Dr["IdUsuario"]),
-                                Nombres = Dr["Nombres"].ToString(),
-                                Apellidos = Dr["Apellidos"].ToString(),
-                                Correo = Dr["Correo"].ToString(),
-                                Clave = Dr["Clave"].ToString(),
-                                Reestablecer = Convert.ToBoolean(Dr["Restablecer"]),
-                                Activo = Convert.ToBoolean(Dr["Activo"]),
-
-                            });
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                lista = new List<EntityLayer.Usuario>();
-            }
-
-            return lista;
-        }
-
-        public int Registrar(EntityLayer.Usuario obj, out string Mensaje)
+        public int Registrar(EntityLayer.Cliente obj, out string Mensaje)
         {
             int IdAutogenerado = 0;
 
@@ -59,12 +19,11 @@ namespace CarritoCompras.DataLayer
             {
                 using (SqlConnection Cnx = new SqlConnection(Conexion.Cn))
                 {
-                    SqlCommand Cmd = new SqlCommand("sp_RegistrarUsuario", Cnx);
+                    SqlCommand Cmd = new SqlCommand("sp_RegistrarCliente", Cnx);
                     Cmd.Parameters.AddWithValue("Nombres", obj.Nombres);
                     Cmd.Parameters.AddWithValue("Apellidos", obj.Apellidos);
                     Cmd.Parameters.AddWithValue("Correo", obj.Correo);
                     Cmd.Parameters.AddWithValue("Clave", obj.Clave);
-                    Cmd.Parameters.AddWithValue("Activo", obj.Activo);
                     Cmd.Parameters.Add("Resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
                     Cmd.Parameters.Add("Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
                     Cmd.CommandType = CommandType.StoredProcedure;
@@ -73,7 +32,7 @@ namespace CarritoCompras.DataLayer
                     Cmd.ExecuteNonQuery();
 
                     IdAutogenerado = Convert.ToInt32(Cmd.Parameters["Resultado"].Value);
-                        Mensaje = Cmd.Parameters["Mensaje"].Value.ToString();
+                    Mensaje = Cmd.Parameters["Mensaje"].Value.ToString();
 
                 }
             }
@@ -85,7 +44,46 @@ namespace CarritoCompras.DataLayer
             return IdAutogenerado;
         }
 
-        public bool Editar(EntityLayer.Usuario obj, out string mensaje)
+        public List<EntityLayer.Cliente> Listar()
+        {
+            List<EntityLayer.Cliente> lista = new List<EntityLayer.Cliente>();
+
+            try
+            {
+                using (SqlConnection Cnx = new SqlConnection(Conexion.Cn))
+                {
+                    string query = "Select IdCliente, Nombres, Apellidos, Correo, Clave, Reestablecer from Cliente";
+                    SqlCommand Cmd = new SqlCommand(query, Cnx);
+
+                    Cnx.Open();
+                    using (SqlDataReader Dr = Cmd.ExecuteReader())
+                    {
+                        while (Dr.Read())
+                        {
+                            lista.Add(new EntityLayer.Cliente()
+                            {
+                                IdCliente = Convert.ToInt32(Dr["IdCliente"]),
+                                Nombres = Dr["Nombres"].ToString(),
+                                Apellidos = Dr["Apellidos"].ToString(),
+                                Correo = Dr["Correo"].ToString(),
+                                Clave = Dr["Clave"].ToString(),
+                                Restablecer = Convert.ToBoolean(Dr["Reestablecer"])
+                            });
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                lista = new List<EntityLayer.Cliente>();
+            }
+
+            return lista;
+        }
+
+        
+
+        public bool Editar(EntityLayer.Cliente obj, out string mensaje)
         {
             bool resultado = false;
             mensaje = string.Empty;
@@ -94,12 +92,11 @@ namespace CarritoCompras.DataLayer
             {
                 using (SqlConnection Cnx = new SqlConnection(Conexion.Cn))
                 {
-                    SqlCommand Cmd = new SqlCommand("sp_EditarUsuario", Cnx);
-                    Cmd.Parameters.AddWithValue("IdUsuario", obj.IdUsuario);
+                    SqlCommand Cmd = new SqlCommand("sp_EditarCliente", Cnx);
+                    Cmd.Parameters.AddWithValue("IdCliente", obj.IdCliente);
                     Cmd.Parameters.AddWithValue("Nombres", obj.Nombres);
                     Cmd.Parameters.AddWithValue("Apellidos", obj.Apellidos);
                     Cmd.Parameters.AddWithValue("Correo", obj.Correo);
-                    Cmd.Parameters.AddWithValue("Activo", obj.Activo);
                     Cmd.Parameters.Add("Resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
                     Cmd.Parameters.Add("Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
                     Cmd.CommandType = CommandType.StoredProcedure;
@@ -128,8 +125,8 @@ namespace CarritoCompras.DataLayer
             {
                 using (SqlConnection Cnx = new SqlConnection(Conexion.Cn))
                 {
-                    SqlCommand Cmd = new SqlCommand("Delete Usuario where IdUsuario = @IdUsuario", Cnx);
-                    Cmd.Parameters.AddWithValue("@IdUsuario", id);
+                    SqlCommand Cmd = new SqlCommand("Delete Cliente where IdCliente = @IdCliente", Cnx);
+                    Cmd.Parameters.AddWithValue("@IdCliente", id);
                     Cmd.CommandType = CommandType.Text;
                     Cnx.Open();
                     resultado = Cmd.ExecuteNonQuery() > 0 ? true : false;
@@ -143,7 +140,7 @@ namespace CarritoCompras.DataLayer
             return resultado;
         }
 
-        public bool CambiarClave(int IdUsuario, string NuevaClave, out string mensaje)
+        public bool CambiarClave(int IdCliente, string NuevaClave, out string mensaje)
         {
             bool resultado = false;
             mensaje = string.Empty;
@@ -152,9 +149,9 @@ namespace CarritoCompras.DataLayer
             {
                 using (SqlConnection Cnx = new SqlConnection(Conexion.Cn))
                 {
-                    string query = "Update Usuario set Clave = @NuevaClave, Restablecer = 0 where IdUsuario = @IdUsuario";
+                    string query = "Update Cliente set Clave = @NuevaClave, Restablecer = 0 where IdCliente = @IdCliente";
                     SqlCommand Cmd = new SqlCommand(query, Cnx);
-                    Cmd.Parameters.AddWithValue("@IdUsuario", IdUsuario);
+                    Cmd.Parameters.AddWithValue("@IdCliente", IdCliente);
                     Cmd.Parameters.AddWithValue("@NuevaClave", NuevaClave);
                     Cmd.CommandType = CommandType.Text;
                     Cnx.Open();
@@ -169,7 +166,7 @@ namespace CarritoCompras.DataLayer
             return resultado;
         }
 
-        public bool RestablecerClave(int IdUsuario, string Clave, out string mensaje)
+        public bool RestablecerClave(int IdCliente, string Clave, out string mensaje)
         {
             bool resultado = false;
             mensaje = string.Empty;
@@ -178,9 +175,9 @@ namespace CarritoCompras.DataLayer
             {
                 using (SqlConnection Cnx = new SqlConnection(Conexion.Cn))
                 {
-                    string query = "Update Usuario set Clave = @Clave, Restablecer = 1 where IdUsuario = @IdUsuario";
+                    string query = "Update Cliente set Clave = @Clave, Restablecer = 1 where IdCliente = @IdCliente";
                     SqlCommand Cmd = new SqlCommand(query, Cnx);
-                    Cmd.Parameters.AddWithValue("@IdUsuario", IdUsuario);
+                    Cmd.Parameters.AddWithValue("@IdCliente", IdCliente);
                     Cmd.Parameters.AddWithValue("@Clave", Clave);
                     Cmd.CommandType = CommandType.Text;
                     Cnx.Open();

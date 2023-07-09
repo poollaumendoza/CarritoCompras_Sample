@@ -12,6 +12,7 @@ using System.Web.Mvc;
 
 namespace CarritoCompras.AdminLayer.Controllers
 {
+    [Authorize]
     public class MantenimientoController : Controller
     {
         public ActionResult Categoria()

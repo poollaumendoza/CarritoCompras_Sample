@@ -75,5 +75,39 @@ namespace CarritoCompras.BusinessLayer
         {
             return dUsuario.Eliminar(id, out mensaje);
         }
+
+        public bool CambiarClave(int IdUsuario, string NuevaClave, out string mensaje)
+        {
+            return dUsuario.CambiarClave(IdUsuario, NuevaClave, out mensaje);
+        }
+
+        public bool RestablecerClave(int IdUsuario, string Correo, out string Mensaje)
+        {
+            Mensaje = string.Empty;
+            string nuevaclave = Recursos.GenerarClave();
+            bool resultado = dUsuario.RestablecerClave(IdUsuario, nuevaclave, out Mensaje);
+
+            if (resultado)
+            {
+                string asunto = "Contraseña restablecida";
+                string bmensaje = "<h3>Su cuenta ha sido restablecida corectamente</h3></br><p>Su contraseña para acceder ahora es: ~clave~</p>";
+                bmensaje = bmensaje.Replace("~clave~", nuevaclave);
+
+                bool respuesta = Recursos.EnviarCorreo(Correo, asunto, bmensaje);
+
+                if (respuesta)
+                    return true;
+                else
+                {
+                    Mensaje = "No se pudo enviar el correo";
+                    return false;
+                }
+            }
+            else
+            {
+                Mensaje = "No se pudo restablecer la contraseña";
+                return false;
+            }
+        }
     }
 }

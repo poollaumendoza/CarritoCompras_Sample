@@ -155,7 +155,6 @@ namespace CarritoCompras.DataLayer
                     Cmd.CommandType = CommandType.Text;
 
                     Cnx.Open();
-                    ;
 
                     if (Cmd.ExecuteNonQuery() > 0)
                         resultado = true;
